@@ -2,6 +2,7 @@ const express = require("express");
 const { sequelize } = require("./models");
 require("dotenv").config();
 const auth = require("./routes/auth");
+const shipments = require("./routes/shipments");
 const app = express();
 app.use(express.static("."));
 app.use(express.json());
@@ -20,6 +21,7 @@ const URL = process.env.URL;
 // app.use(`${URL}addToken/`, addToken);
 // app.use(`${URL}filterLocations/`, filterLocations);
 app.use(URL, auth);
+app.use(URL, shipments);
 
 app.listen(PORT, async () => {
   console.log(`server is running at ${PORT}`);
