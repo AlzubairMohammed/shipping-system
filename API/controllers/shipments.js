@@ -1,6 +1,7 @@
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const { Shipment } = require("../models");
+const { where } = require("sequelize");
 exports.createShipment = asyncHandler(async (req, res, next) => {
   try {
     let undefinedError = {};
@@ -88,7 +89,12 @@ exports.createShipment = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.getShipment = async (req, res) => {};
+exports.getShipment = asyncHandler(async (req, res, next) => {
+  const shipment = await Shipment.findOne({ where: { id: req.params.id } });
+  if (!shipment) return next(new ErrorResponse("shipment not found", 404));
+  if (shipment) return res.status(200).json(shipment);
+  next(new ErrorResponse());
+});
 
 exports.getShipments = asyncHandler(async (req, res, next) => {
   const shipments = await Shipment.findAll();
