@@ -1,6 +1,7 @@
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
 const { Shipment } = require("../models");
+const { SUCCESS, FAIL, ERROR } = require("../utils/httpStatus");
 const { where } = require("sequelize");
 exports.createShipment = asyncHandler(async (req, res, next) => {
   try {
@@ -82,7 +83,7 @@ exports.createShipment = asyncHandler(async (req, res, next) => {
       moreData,
     });
     if (shipment) {
-      return res.status(200).json({ success: true, msg: `Shipment created` });
+      return res.status(200).json({ status: SUCCESS, data: { shipment } });
     }
   } catch {
     return next(new ErrorResponse());
@@ -92,13 +93,15 @@ exports.createShipment = asyncHandler(async (req, res, next) => {
 exports.getShipment = asyncHandler(async (req, res, next) => {
   const shipment = await Shipment.findOne({ where: { id: req.params.id } });
   if (!shipment) return next(new ErrorResponse("shipment not found", 404));
-  if (shipment) return res.status(200).json(shipment);
+  if (shipment)
+    return res.status(200).json({ status: SUCCESS, data: { shipment } });
   next(new ErrorResponse());
 });
 
 exports.getShipments = asyncHandler(async (req, res, next) => {
   const shipments = await Shipment.findAll();
   if (!shipments) return next(new ErrorResponse("shipments not found", 404));
-  if (shipments) return res.status(200).json(shipments);
+  if (shipments)
+    return res.status(200).json({ status: SUCCESS, data: { shipments } });
   next(new ErrorResponse());
 });
